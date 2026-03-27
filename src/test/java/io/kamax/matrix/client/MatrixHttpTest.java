@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -107,7 +106,7 @@ public class MatrixHttpTest {
                 baseUrl = "https://" + hostname + ":" + port;
                 username = configValues.get("Username");
                 password = configValues.get("Password");
-                user = new MatrixID(username, domain);
+                user = MatrixID.asAcceptable(username, domain);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }

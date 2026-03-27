@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -103,16 +102,6 @@ public class MatrixID implements _MatrixID {
         this.id = mxId.id;
         this.localpart = mxId.localpart;
         this.domain = mxId.domain;
-    }
-
-    @Deprecated
-    public MatrixID(String mxId) {
-        this(parse(mxId));
-    }
-
-    @Deprecated
-    public MatrixID(String localpart, String domain) {
-        this(parse(buildRaw(localpart, domain)));
     }
 
     @Override

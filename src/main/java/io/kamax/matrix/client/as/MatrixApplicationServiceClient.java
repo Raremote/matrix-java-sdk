@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -30,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

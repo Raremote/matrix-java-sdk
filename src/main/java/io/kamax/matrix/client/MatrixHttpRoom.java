@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -50,7 +49,6 @@ import java.util.List;
 import java8.util.Optional;
 import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
-
 
 import okhttp3.HttpUrl;
 import okhttp3.Request;
@@ -104,6 +102,17 @@ public class MatrixHttpRoom extends AMatrixHttpClient implements _MatrixRoom {
     }
 
     @Override
+    public String getVersion() {
+        Optional<JsonObject> createEvent = getState("m.room.create");
+        if (!createEvent.isPresent()) {
+            // Fallback to default version "1" as per spec
+            return "1";
+        }
+        JsonObject content = createEvent.get();
+        return GsonUtil.getString(content, "room_version").orElse("1");
+    }
+
+    @Override
     public Optional<JsonObject> getState(String type) {
         URL path = getClientPath("rooms", getAddress(), "state", type);
 
@@ -129,6 +138,19 @@ public class MatrixHttpRoom extends AMatrixHttpClient implements _MatrixRoom {
         }
 
         return Optional.of(GsonUtil.parseObj(body));
+    }
+
+    @Override
+    public void setRoomAccountData(String type, JsonObject data) {
+        URL path = getClientPath("user", getUserId(), "rooms", getAddress(), "account_data", type);
+        executeAuthenticated(new Request.Builder().put(getJsonBody(data)).url(path));
+    }
+
+    @Override
+    public JsonObject getRoomAccountData(String type) {
+        URL path = getClientPath("user", getUserId(), "rooms", getAddress(), "account_data", type);
+        String body = executeAuthenticated(new Request.Builder().get().url(path));
+        return GsonUtil.parseObj(body);
     }
 
     @Override
@@ -223,6 +245,29 @@ public class MatrixHttpRoom extends AMatrixHttpClient implements _MatrixRoom {
         return GsonUtil.getStringOrThrow(GsonUtil.parseObj(body), "event_id");
     }
 
+    @Override
+    public String sendState(String type, String key, JsonObject content) {
+        URL path;
+        if (key == null || key.isEmpty()) {
+            path = getClientPath("rooms", roomId, "state", type);
+        } else {
+            path = getClientPath("rooms", roomId, "state", type, key);
+        }
+        String body = executeAuthenticated(new Request.Builder().put(getJsonBody(content)).url(path));
+        return GsonUtil.getStringOrThrow(GsonUtil.parseObj(body), "event_id");
+    }
+
+    @Override
+    public String redactEvent(String eventId, String reason) {
+        URL path = getClientPath("rooms", roomId, "redact", eventId, Long.toString(System.currentTimeMillis()));
+        JsonObject content = new JsonObject();
+        if (reason != null && !reason.isEmpty()) {
+            content.addProperty("reason", reason);
+        }
+        String body = executeAuthenticated(new Request.Builder().put(getJsonBody(content)).url(path));
+        return GsonUtil.getStringOrThrow(GsonUtil.parseObj(body), "event_id");
+    }
+
     private String sendMessage(RoomMessageTextPutBody content) {
         return sendEvent("m.room.message", GsonUtil.makeObj(content));
     }
@@ -305,6 +350,27 @@ public class MatrixHttpRoom extends AMatrixHttpClient implements _MatrixRoom {
         }
 
         return ids;
+    }
+
+    @Override
+    public JsonObject getMembers() {
+        URL path = getClientPath("rooms", getAddress(), "members");
+        String body = executeAuthenticated(new Request.Builder().get().url(path));
+        return GsonUtil.parseObj(body);
+    }
+
+    @Override
+    public JsonObject getAliases() {
+        URL path = getClientPath("rooms", getAddress(), "aliases");
+        String body = executeAuthenticated(new Request.Builder().get().url(path));
+        return GsonUtil.parseObj(body);
+    }
+
+    @Override
+    public JsonObject getJoinedMembers() {
+        URL path = getClientPath("rooms", getAddress(), "joined_members");
+        String body = executeAuthenticated(new Request.Builder().get().url(path));
+        return GsonUtil.parseObj(body);
     }
 
     @Override
@@ -438,4 +504,133 @@ public class MatrixHttpRoom extends AMatrixHttpClient implements _MatrixRoom {
         URL path = getClientPath("user", getUserId(), "rooms", getAddress(), "tags", tag);
         executeAuthenticated(new Request.Builder().url(path).delete());
     }
+
+    @Override
+    public JsonObject getHierarchy() {
+        return getHierarchy(Optional.empty(), Optional.empty());
+    }
+
+    @Override
+    public JsonObject getHierarchy(Optional<String> from, Optional<Integer> limit) {
+        HttpUrl.Builder builder = getClientV1PathBuilder("rooms", getAddress(), "hierarchy");
+        from.ifPresent(f -> builder.addQueryParameter("from", f));
+        limit.ifPresent(l -> builder.addQueryParameter("limit", l.toString()));
+        URL path = builder.build().url();
+        String body = executeAuthenticated(new Request.Builder().get().url(path));
+        return GsonUtil.parseObj(body);
+    }
+
+    @Override
+    public JsonObject getThreads() {
+        return getThreads(Optional.empty(), Optional.empty());
+    }
+
+    @Override
+    public JsonObject getThreads(Optional<String> from, Optional<Integer> limit) {
+        HttpUrl.Builder builder = getClientV1PathBuilder("rooms", getAddress(), "threads");
+        from.ifPresent(f -> builder.addQueryParameter("from", f));
+        limit.ifPresent(l -> builder.addQueryParameter("limit", l.toString()));
+        URL path = builder.build().url();
+        String body = executeAuthenticated(new Request.Builder().get().url(path));
+        return GsonUtil.parseObj(body);
+    }
+
+    @Override
+    public String upgradeRoom(String newVersion) {
+        URL path = getClientPath("rooms", getAddress(), "upgrade");
+        JsonObject body = new JsonObject();
+        body.addProperty("new_version", newVersion);
+        String resBody = executeAuthenticated(new Request.Builder().post(getJsonBody(body)).url(path));
+        return GsonUtil.getStringOrThrow(GsonUtil.parseObj(resBody), "replacement_room");
+    }
+
+    @Override
+    public void setTyping(boolean typing, int timeoutMs) {
+        URL path = getClientPath("rooms", getAddress(), "typing", getUserId());
+        JsonObject body = new JsonObject();
+        body.addProperty("typing", typing);
+        body.addProperty("timeout", timeoutMs);
+        executeAuthenticated(new Request.Builder().put(getJsonBody(body)).url(path));
+    }
+
+    @Override
+    public void reportEvent(String eventId, int score, String reason) {
+        URL path = getClientPath("rooms", getAddress(), "report", eventId);
+        JsonObject body = new JsonObject();
+        body.addProperty("score", score);
+        body.addProperty("reason", reason);
+        executeAuthenticated(new Request.Builder().post(getJsonBody(body)).url(path));
+    }
+
+    @Override
+    public void setReadMarkers(String fullyRead, String readReceipt) {
+        URL path = getClientPath("rooms", getAddress(), "read_markers");
+        JsonObject body = new JsonObject();
+        if (fullyRead != null) {
+            body.addProperty("m.fully_read", fullyRead);
+        }
+        if (readReceipt != null) {
+            body.addProperty("m.read", readReceipt);
+        }
+        executeAuthenticated(new Request.Builder().post(getJsonBody(body)).url(path));
+    }
+
+    @Override
+    public JsonObject getEventContext(String eventId, int limit) {
+        HttpUrl.Builder builder = getClientPathBuilder("rooms", getAddress(), "context", eventId);
+        builder.addQueryParameter("limit", Integer.toString(limit));
+        String response = executeAuthenticated(new Request.Builder().get().url(builder.build().url()));
+        return GsonUtil.parseObj(response);
+    }
+
+    @Override
+    public void ban(_MatrixID user, String reason) {
+        URL path = getClientPath("rooms", getAddress(), "ban");
+        JsonObject body = new JsonObject();
+        body.addProperty("user_id", user.getId());
+        if (reason != null) {
+            body.addProperty("reason", reason);
+        }
+        executeAuthenticated(new Request.Builder().post(getJsonBody(body)).url(path));
+    }
+
+    @Override
+    public void unban(_MatrixID user) {
+        URL path = getClientPath("rooms", getAddress(), "unban");
+        JsonObject body = new JsonObject();
+        body.addProperty("user_id", user.getId());
+        executeAuthenticated(new Request.Builder().post(getJsonBody(body)).url(path));
+    }
+
+    @Override
+    public void forget() {
+        URL path = getClientPath("rooms", getAddress(), "forget");
+        executeAuthenticated(new Request.Builder().post(getJsonBody(new JsonObject())).url(path));
+    }
+
+    @Override
+    public JsonObject getEvent(String eventId) {
+        URL path = getClientPath("rooms", getAddress(), "event", eventId);
+        String response = executeAuthenticated(new Request.Builder().get().url(path));
+        return GsonUtil.parseObj(response);
+    }
+
+    @Override
+    public JsonObject getRelations(String eventId, Optional<String> relType, Optional<String> eventType) {
+        HttpUrl.Builder builder = getClientPathBuilder("rooms", getAddress(), "relations", eventId);
+        relType.ifPresent(rt -> builder.addQueryParameter("rel_type", rt));
+        eventType.ifPresent(et -> builder.addQueryParameter("event_type", et));
+        String response = executeAuthenticated(new Request.Builder().get().url(builder.build().url()));
+        return GsonUtil.parseObj(response);
+    }
+
+    @Override
+    public JsonObject timestampToEvent(long timestamp, Optional<String> direction) {
+        HttpUrl.Builder builder = getClientV1PathBuilder("rooms", getAddress(), "timestamp_to_event");
+        builder.addQueryParameter("ts", Long.toString(timestamp));
+        direction.ifPresent(dir -> builder.addQueryParameter("dir", dir));
+        String response = executeAuthenticated(new Request.Builder().get().url(builder.build().url()));
+        return GsonUtil.parseObj(response);
+    }
+
 }

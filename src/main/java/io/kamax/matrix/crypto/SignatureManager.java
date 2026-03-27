@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -29,7 +28,6 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-
 
 import net.i2p.crypto.eddsa.EdDSAEngine;
 

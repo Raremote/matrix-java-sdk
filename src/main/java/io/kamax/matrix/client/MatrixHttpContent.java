@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -31,7 +30,6 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java8.util.Optional;
-
 
 import okhttp3.Request;
 
@@ -79,8 +77,8 @@ public class MatrixHttpContent extends AMatrixHttpClient implements _MatrixConte
 
     @Override
     public URL getPermaLink() {
-        return getMediaPathBuilder("download", address.getHost()).addEncodedPathSegments(address.getPath().substring(1))
-                .build().url();
+        return getClientMediaV1PathBuilder("download", address.getHost())
+                .addEncodedPathSegments(address.getPath().substring(1)).build().url();
     }
 
     @Override

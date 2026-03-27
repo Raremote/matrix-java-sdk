@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -162,8 +161,8 @@ public abstract class AMatrixHttpRoomTest extends MatrixHttpTest {
     @Test
     public void getJoinedUsers() throws URISyntaxException {
         List<_MatrixID> expectedResult = new ArrayList<>();
-        expectedResult.add(new MatrixID(joinedUser1));
-        expectedResult.add(new MatrixID(joinedUser2));
+        expectedResult.add(MatrixID.asAcceptable(joinedUser1));
+        expectedResult.add(MatrixID.asAcceptable(joinedUser2));
 
         // FIXME need to be fixed following new code
         // assertThat(createRoomObject().getJoinedUsers(), IsEqual.equalTo(expectedResult));

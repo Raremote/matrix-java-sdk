@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2018 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -38,7 +37,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class RoomCreateWiremockTest extends MatrixHttpTest {
 
-    private final String syncPath = "/_matrix/client/r0/createRoom";
+    private final String syncPath = "/_matrix/client/v3/createRoom";
 
     @Test
     public void createRoomWithNoOption() throws Exception {
@@ -46,7 +45,7 @@ public class RoomCreateWiremockTest extends MatrixHttpTest {
         JsonObject resBody = new JsonObject();
         resBody.addProperty("room_id", roomId);
         String resBodyRaw = GsonUtil.get().toJson(resBody);
-        stubFor(post(urlPathEqualTo("/_matrix/client/r0/createRoom"))
+        stubFor(post(urlPathEqualTo("/_matrix/client/v3/createRoom"))
                 .willReturn(aResponse().withStatus(200).withBody(resBodyRaw)));
 
         MatrixHomeserver hs = new MatrixHomeserver(domain, baseUrl);

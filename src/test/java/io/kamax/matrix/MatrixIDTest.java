@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -40,10 +39,10 @@ public class MatrixIDTest {
 
     @Test
     public void validMatrixIDs() {
-        _MatrixID mxId1 = new MatrixID(validMxId1);
-        _MatrixID mxId3 = new MatrixID(validMxId3);
-        _MatrixID mxId4 = new MatrixID(validMxid4);
-        _MatrixID mxId5 = new MatrixID(validMxid5);
+        _MatrixID mxId1 = MatrixID.asAcceptable(validMxId1);
+        _MatrixID mxId3 = MatrixID.asAcceptable(validMxId3);
+        _MatrixID mxId4 = MatrixID.asAcceptable(validMxid4);
+        _MatrixID mxId5 = MatrixID.asAcceptable(validMxid5);
         assertTrue(validMxId1.contentEquals(mxId1.getId()));
         assertTrue("john.doe".contentEquals(mxId1.getLocalPart()));
         assertTrue("example.org".contentEquals(mxId1.getDomain()));
@@ -53,9 +52,9 @@ public class MatrixIDTest {
 
     @Test
     public void validateEqual() {
-        _MatrixID mxId1 = new MatrixID(validMxId1);
-        _MatrixID mxId2 = new MatrixID(validMxId1);
-        _MatrixID mxId3 = new MatrixID(validMxId2);
+        _MatrixID mxId1 = MatrixID.asAcceptable(validMxId1);
+        _MatrixID mxId2 = MatrixID.asAcceptable(validMxId1);
+        _MatrixID mxId3 = MatrixID.asAcceptable(validMxId2);
 
         assertTrue(mxId1.equals(mxId2));
         assertTrue(mxId2.equals(mxId1));
@@ -65,27 +64,27 @@ public class MatrixIDTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void invalidMatrixIDs1() {
-        new MatrixID(invalidMxId1);
+        MatrixID.from(invalidMxId1).acceptable();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void invalidMatrixIDs2() {
-        new MatrixID(invalidMxId2);
+        MatrixID.from(invalidMxId2).acceptable();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void invalidMatrixIDs3() {
-        new MatrixID(invalidMxId3);
+        MatrixID.from(invalidMxId3).acceptable();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void invalidMatrixIDs4() {
-        new MatrixID(invalidMxId4);
+        MatrixID.from(invalidMxId4).acceptable();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void invalidMatrixIDs5() {
-        new MatrixID(invalidMxId5);
+        MatrixID.from(invalidMxId5).acceptable();
     }
 
 }

@@ -1,9 +1,9 @@
 # Matrix Client SDK for Java
-[![Build Status](https://travis-ci.org/kamax-matrix/matrix-java-sdk.svg?branch=master)](https://travis-ci.org/kamax-matrix/matrix-java-sdk)
+[![Build Status](https://github.com/kamax-matrix/matrix-java-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/kamax-matrix/matrix-java-sdk/actions)
 
 ---
 
-**This project is no longer maintained.**
+**Matrix HTTP API v3 SDK for Java** - A pure Java implementation of the Matrix client-server API supporting all modern Matrix features (v1.17/v1.18).
 
 ---
 
@@ -15,40 +15,42 @@ Matrix SDK in Java 1.8 for:
 - Application Server -> Homeserver
 
 ## Use
+### Build from source
+This SDK is not currently published to Maven Central. To use it in your project, you need to build it from source:
+
+```bash
+git clone https://github.com/kamax-matrix/matrix-java-sdk.git
+cd matrix-java-sdk
+./gradlew build
+```
+
+Then include the built JAR in your project or install it to your local Maven repository:
+
+```bash
+./gradlew publishToMavenLocal
+```
+
 ### Add to your project
 #### Gradle
 ```
-repositories {
-    maven {
-        url 'https://kamax.io/maven/releases/'
-    }
-}
-
 dependencies {
-    compile 'io.kamax:matrix-java-sdk:<USE_LATEST_TAG_WITHOUT_LEADING_V>'
+    implementation 'io.kamax:matrix-java-sdk:0.1.0' // Check latest version in build.gradle
 }
 ```
 
 #### Maven
 ```
-<repositories>
-  <repository>
-    <id>kamax-io</id>
-    <name>kamax-io</name>
-    <url>https://kamax.io/maven/releases/</url>
-  </repository>
-</repositories>
 <dependencies>
   <dependency>
     <groupId>io.kamax</groupId>
     <artifactId>matrix-java-sdk</artifactId>
-    <version>USE_LATEST_TAG_WITHOUT_LEADING_V</version>
+    <version>0.1.0</version> <!-- Check latest version in build.gradle -->
   </dependency>
 </dependencies>
 ```
-**WARNING:** This SDK was originally created to support [Kamax.io projects](https://github.com/kamax-matrix) and is
-therefore not necessarily complete. It will be built as the various projects evolve and grow. The SDK is therefore still
-in Alpha.
+**Note:** This SDK was originally created to support Kamax.io projects and has been updated to provide comprehensive
+Matrix HTTP API v3 support. It now includes all modern Matrix features (v1.17/v1.18) including spaces, threads,
+end-to-end encryption, device management, and more.
 
 ### Getting started
 #### Getting the client object

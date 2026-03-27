@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -78,7 +77,7 @@ public class MatrixJsonRoomMembershipEvent extends MatrixJsonRoomEvent implement
         super(obj);
 
         content = new Content(getObj("content"));
-        invitee = new MatrixID(getString("state_key"));
+        invitee = MatrixID.asAcceptable(getString("state_key"));
     }
 
     @Override

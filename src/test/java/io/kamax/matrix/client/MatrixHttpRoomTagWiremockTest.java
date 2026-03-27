@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2018 Arne Augenstein
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -37,7 +36,7 @@ import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 public class MatrixHttpRoomTagWiremockTest extends AMatrixHttpRoomTagTest {
     protected String roomId = "roomId892347847";
 
-    private String tagsBaseUrl = "/_matrix/client/r0/user/" + user.getId() + "/rooms/" + roomId + "/tags";
+    private String tagsBaseUrl = "/_matrix/client/v3/user/" + user.getId() + "/rooms/" + roomId + "/tags";
 
     private String emptyTagsBody = "{\"tags\": " + "{}}";
     private String allTagsResponse = "{\"tags\": " + "{\"m.favourite\": {}," + "\"m.lowpriority\": {}," + "\"u."
@@ -127,7 +126,7 @@ public class MatrixHttpRoomTagWiremockTest extends AMatrixHttpRoomTagTest {
                 .inScenario("Tags").whenScenarioStateIs("FavouriteTagAdded").willSetStateTo("UserTagAdded")
                 .willReturn(aResponse().withStatus(200).withBody("{}")));
 
-        stubFor(get(urlEqualTo("/_matrix/client/r0/sync?timeout=30000"))
+        stubFor(get(urlEqualTo("/_matrix/client/v3/sync?timeout=30000"))
                 .withHeader("Authorization", equalTo("Bearer " + testToken)).inScenario("Tags")
                 .whenScenarioStateIs("UserTagAdded").willSetStateTo("syncExecuted")
                 .willReturn(aResponse().withStatus(200).withBody(getSyncJson())));
@@ -153,10 +152,10 @@ public class MatrixHttpRoomTagWiremockTest extends AMatrixHttpRoomTagTest {
     }
 
     private void createPreparationStubs() {
-        stubFor(get(urlEqualTo("/_matrix/client/r0/joined_rooms"))
+        stubFor(get(urlEqualTo("/_matrix/client/v3/joined_rooms"))
                 .willReturn(aResponse().withStatus(200).withBody("{\"joined_rooms\": []}"))
                 .withHeader("Authorization", equalTo("Bearer " + testToken)));
-        stubFor(post(urlEqualTo("/_matrix/client/r0/createRoom"))
+        stubFor(post(urlEqualTo("/_matrix/client/v3/createRoom"))
                 .withHeader("Authorization", equalTo("Bearer " + testToken))
                 .willReturn(aResponse().withStatus(200).withBody("{\"room_id\": \"" + roomId + "\"}")));
 

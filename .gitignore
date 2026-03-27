@@ -1,7 +1,131 @@
 # Gradle
 .gradle
 build/
-
-# Intellij IDEA
-.idea/
 out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# NetBeans
+nbproject/
+nb-configuration.xml
+
+# VS Code
+.vscode/
+
+# Mac OS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Build outputs
+target/
+dist/
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.war
+*.ear
+*.zip
+*.tar
+*.tar.gz
+
+# Generated files
+*.class
+*.dex
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Coverage reports
+coverage/
+jacoco/
+*.exec
+
+# Profiling data
+*.hprof
+
+# Local configuration files
+*.properties
+*.yml
+*.yaml
+!gradle/wrapper/gradle-wrapper.properties
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE workspace files
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
+
+# System files
+*.orig
+*.rej
+
+# Maven (if used alongside Gradle)
+.mvn/
+mvnw
+mvnw.cmd
+
+# Gradle wrapper (should be committed)
+!gradle/wrapper/
+
+# Checkstyle/Spotless reports
+checkstyle/
+spotless/
+reports/
+
+# Test results
+test-output/
+test-results/
+build/reports/tests/
+*.tap
+
+# Java specific
+hs_err_pid*
+
+# SonarQube
+.sonar/
+
+# Temp files
+tmp/
+temp/
+
+# Generated source
+generated/
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual machine crash logs
+hs_err_pid*

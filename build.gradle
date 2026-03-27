@@ -2,8 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -31,26 +29,25 @@ String gitVersion() {
     return versionPattern.matcher(v).matches() ? v.substring(1) : v
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.1'
-    }
-}
-
 plugins {
-    id "com.diffplug.gradle.spotless" version "3.5.2"
+    id "com.diffplug.spotless" version "6.25.0"
+    id 'java'
+    id 'maven-publish'
 }
 
 group = 'io.kamax'
-version = gitVersion()
+version = '0.1.0'
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: 'org.junit.platform.gradle.plugin'
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
 
 configurations {
     deployerJars
@@ -67,61 +64,50 @@ sourceSets {
     }
 }
 
+// Configure testInt configurations after source set is created
+configurations {
+    testIntImplementation.extendsFrom implementation, testImplementation
+    testIntRuntimeOnly.extendsFrom runtimeOnly, testRuntimeOnly
+}
+
 
 dependencies {
-    compile 'org.slf4j:log4j-over-slf4j:1.7.25'
-    compile 'org.apache.commons:commons-lang3:3.8.1'
-    compile 'commons-io:commons-io:2.6'
-    compile 'commons-codec:commons-codec:1.11'
-    compile 'com.squareup.okhttp3:okhttp:3.12.0'
-    compile 'net.sourceforge.streamsupport:streamsupport:1.7.0'
-    compile 'com.google.code.gson:gson:2.8.5'
-    compile 'net.i2p.crypto:eddsa:0.3.0'
+    implementation 'org.slf4j:log4j-over-slf4j:2.0.17'
+    implementation 'org.apache.commons:commons-lang3:3.20.0'
+    implementation 'commons-io:commons-io:2.21.0'
+    implementation 'commons-codec:commons-codec:1.21.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'net.sourceforge.streamsupport:streamsupport:1.7.4'
+    implementation 'com.google.code.gson:gson:2.13.2'
+    implementation 'net.i2p.crypto:eddsa:0.3.0'
 
-    testCompile "org.junit.jupiter:junit-jupiter-api:5.0.0"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.0.0"
-    testCompile "com.github.tomakehurst:wiremock:2.8.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.0.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.0.0"
+    testImplementation "com.github.tomakehurst:wiremock:2.8.0"
     testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.25'
 
-    testIntCompile sourceSets.main.output
-    testIntCompile sourceSets.test.output
-
-    testIntCompile configurations.compile
-    testIntCompile configurations.testCompile
-
-    testIntRuntime configurations.runtime
-    testIntRuntime configurations.testRuntime
+    testIntImplementation sourceSets.main.output
+    testIntImplementation sourceSets.test.output
 
     deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
 }
 
-uploadArchives {
-    gradle.ext.mavenUrl = System.env.MAVEN_URL + (project.version ==~ /\d+\.\d+\.\d+/ ? '/releases' : '/snapshots')
-    gradle.ext.mavenUser = System.env.MAVEN_USER
-    gradle.ext.mavenPassword = System.env.MAVEN_PASS
-    gradle.ext.mavenPrivateKey = System.env.MAVEN_PK
 
-    doLast {
-        println "Published ${project.version} to maven repository ${gradle.mavenUrl} with user ${gradle.mavenUser}"
-    }
-
-    repositories.mavenDeployer {
-        configuration = configurations.deployerJars
-
-        repository(url: gradle.mavenUrl) {
-            authentication(
-                    userName: gradle.mavenUser,
-                    password: gradle.mavenPassword,
-                    privateKey: gradle.mavenPrivateKey
-            )
-        }
-    }
-}
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = System.env.MAVEN_URL + (project.version ==~ /\d+\.\d+\.\d+/ ? '/releases' : '/snapshots')
+            credentials {
+                username = System.env.MAVEN_USER
+                password = System.env.MAVEN_PASS
+            }
+            // SSH key authentication not directly supported, using username/password for now
         }
     }
 }
@@ -141,12 +127,13 @@ spotless {
     }
 }
 
-junitPlatform {
-    enableStandardTestTask true
+test {
+    useJUnitPlatform()
 }
 
 task testInt(type: Test) {
     description = "Integration tests which require a Homeserver"
-    testClassesDir = sourceSets.testInt.output.classesDir
+    testClassesDirs = sourceSets.testInt.output.classesDirs
     classpath = sourceSets.testInt.runtimeClasspath
+    useJUnitPlatform()
 }

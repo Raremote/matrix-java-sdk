@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -32,7 +31,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MatrixApplicationServiceClientTest extends MatrixHttpTest {
-    private String createUserUrl = "/_matrix/client/r0/register";
+    private String createUserUrl = "/_matrix/client/v3/register";
     private String testUser = "testUser";
 
     @Override

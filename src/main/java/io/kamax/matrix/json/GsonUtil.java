@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2018 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -142,6 +141,10 @@ public class GsonUtil {
         return findPrimitive(o, key).map(JsonPrimitive::getAsString);
     }
 
+    public static Optional<String> getString(JsonObject o, String key) {
+        return findString(o, key);
+    }
+
     public static String getStringOrNull(JsonObject o, String key) {
         JsonElement el = o.get(key);
         if (el != null && el.isJsonPrimitive()) {
@@ -177,6 +180,14 @@ public class GsonUtil {
 
     public static long getLong(JsonObject o, String key) {
         return findLong(o, key).orElseThrow(() -> new InvalidJsonException("No numeric value for key " + key));
+    }
+
+    public static Optional<Boolean> findBoolean(JsonObject o, String key) {
+        return findPrimitive(o, key).map(JsonPrimitive::getAsBoolean);
+    }
+
+    public static boolean getBoolean(JsonObject o, String key) {
+        return findBoolean(o, key).orElseThrow(() -> new InvalidJsonException("No boolean value for key " + key));
     }
 
     public static Optional<JsonObject> findObj(JsonObject o, String key) {

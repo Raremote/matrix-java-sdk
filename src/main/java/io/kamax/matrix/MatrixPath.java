@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2018 Kamax Sàrl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -52,8 +51,8 @@ public class MatrixPath {
         return base().add("client");
     }
 
-    public static MatrixPath clientR0() {
-        return client().add("r0");
+    public static MatrixPath clientV3() {
+        return client().add("v3");
     }
 
     private StringBuilder path = new StringBuilder();

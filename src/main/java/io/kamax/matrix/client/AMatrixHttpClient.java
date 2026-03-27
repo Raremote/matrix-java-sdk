@@ -2,7 +2,6 @@
  * matrix-java-sdk - Matrix Client SDK for Java
  * Copyright (C) 2017 Kamax Sarl
  *
- * https://www.kamax.io/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -40,7 +39,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java8.util.Objects;
 import java8.util.Optional;
-
 
 import okhttp3.*;
 
@@ -375,13 +373,13 @@ public abstract class AMatrixHttpClient implements _MatrixClientRaw {
     }
 
     protected HttpUrl.Builder getClientPathBuilder(String... segments) {
-        String[] base = { "client", "r0" };
+        String[] base = { "client", "v3" };
         segments = ArrayUtils.addAll(base, segments);
         return getPathBuilder(segments);
     }
 
     protected HttpUrl.Builder getMediaPathBuilder(String... segments) {
-        String[] base = { "media", "r0" };
+        String[] base = { "media", "v3" };
         segments = ArrayUtils.addAll(base, segments);
         return getPathBuilder(segments);
     }
@@ -396,6 +394,26 @@ public abstract class AMatrixHttpClient implements _MatrixClientRaw {
 
     protected RequestBody getJsonBody(Object o) {
         return RequestBody.create(MediaType.parse("application/json"), GsonUtil.get().toJson(o));
+    }
+
+    protected HttpUrl.Builder getClientV1PathBuilder(String... segments) {
+        String[] base = { "client", "v1" };
+        segments = ArrayUtils.addAll(base, segments);
+        return getPathBuilder(segments);
+    }
+
+    protected URL getClientV1Path(String... segments) {
+        return getClientV1PathBuilder(segments).build().url();
+    }
+
+    protected HttpUrl.Builder getClientMediaV1PathBuilder(String... segments) {
+        String[] base = { "client", "v1", "media" };
+        segments = ArrayUtils.addAll(base, segments);
+        return getPathBuilder(segments);
+    }
+
+    protected URL getClientMediaV1Path(String... segments) {
+        return getClientMediaV1PathBuilder(segments).build().url();
     }
 
     protected Request.Builder request(URL url) {
