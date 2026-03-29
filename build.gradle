@@ -137,3 +137,9 @@ task testInt(type: Test) {
     classpath = sourceSets.testInt.runtimeClasspath
     useJUnitPlatform()
 }
+
+task printTestClasspath {
+    doLast {
+        println sourceSets.test.runtimeClasspath.asPath
+    }
+}
