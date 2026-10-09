@@ -65,6 +65,8 @@ jacoco/
 *.yml
 *.yaml
 !gradle/wrapper/gradle-wrapper.properties
+!.releaserc.yml
+!.forgejo/**/*.yml
 
 # Environment files
 .env

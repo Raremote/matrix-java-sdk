@@ -1,0 +1,26 @@
+# Semantic-release configuration for matrix-java-sdk.
+#
+# Version is DERIVED from conventional commits — never set manually.
+#   feat:            -> minor    fix: -> patch    feat!: / BREAKING CHANGE -> major
+branches:
+  - master
+
+plugins:
+  # 1. Determine the bump from commit history since the last tag
+  - '@semantic-release/commit-analyzer'
+
+  # 2. Generate release notes from those commits
+  - '@semantic-release/release-notes-generator'
+
+  # 3. Write/update CHANGELOG.md BEFORE git commits it
+  - '@semantic-release/changelog'
+
+  # 4. Publish Gradle artifacts at the computed version
+  #    (-Pversion overrides the version in build.gradle)
+  - - '@semantic-release/exec'
+    - prepareCmd: ./gradlew publish -Pversion="${nextRelease.version}"
+
+  # 5. Commit the changelog (must run after the changelog plugin)
+  - - '@semantic-release/git'
+    - assets: ['CHANGELOG.md']
+      message: 'chore(release): ${nextRelease.version} [skip ci]'

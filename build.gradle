@@ -36,18 +36,12 @@ plugins {
 }
 
 group = 'io.kamax'
-version = '0.1.0'
+version = providers.gradleProperty('version').getOrElse('0.1.0')
 
 
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
-}
 
 configurations {
     deployerJars
@@ -102,12 +96,14 @@ publishing {
     }
     repositories {
         maven {
-            url = System.env.MAVEN_URL + (project.version ==~ /\d+\.\d+\.\d+/ ? '/releases' : '/snapshots')
+            name = 'ak'
+            url = version.toString().endsWith('SNAPSHOT')
+                    ? (System.getenv('AK_SNAPSHOT_URL') ?: 'https://artifacts.example.com/maven/maven-snapshots')
+                    : (System.getenv('AK_REGISTRY_URL') ?: 'https://artifacts.example.com/maven/maven-releases')
             credentials {
-                username = System.env.MAVEN_USER
-                password = System.env.MAVEN_PASS
+                username = System.getenv('AK_USERNAME') ?: 'ci'
+                password = System.getenv('AK_TOKEN') ?: ''
             }
-            // SSH key authentication not directly supported, using username/password for now
         }
     }
 }

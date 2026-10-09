@@ -1,0 +1,27 @@
+name: Snapshot
+
+on:
+  push:
+    branches:
+      - 'feat/*'
+      - 'fix/*'
+
+jobs:
+  snapshot:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6.0.1
+        with:
+          java-version: '21'
+          distribution: temurin
+
+      - name: Publish snapshot
+        env:
+          AK_SNAPSHOT_URL: ${{ vars.AK_SNAPSHOT_URL }}
+          AK_USERNAME: ${{ vars.AK_USERNAME }}
+          AK_TOKEN: ${{ secrets.AK_TOKEN }}
+        run: |
+          BRANCH=${FORGEJO_REF_NAME//\//-}
+          ./gradlew publish -Pversion="0.0.0-${BRANCH}-SNAPSHOT"
