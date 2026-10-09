@@ -21,6 +21,7 @@ package io.kamax.matrix.json;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -31,11 +32,11 @@ public class RoomMessageFormattedTextPutBodyTest {
         String rawFallback = "test";
         String html = "<img src=\"mxc://matrix.local/vaqAwlPGRjSoyCjUuGVAxhHc\" width=\"16\" height=\"16\" style=\"vertical-align:middle; margin-right: 4px; border-radius: 2px;\" alt=\"Raremote\" title=\"Raremote\" data-mx-emoticon=\"true\" />";
         RoomMessageFormattedTextPutBody body = new RoomMessageFormattedTextPutBody(rawFallback, html);
-        
+
         JsonObject json = GsonUtil.makeObj(body);
         System.out.println("Generated JSON:");
         System.out.println(new Gson().toJson(json));
-        
+
         System.out.println("\nformatted_body value:");
         System.out.println(json.get("formatted_body").getAsString());
     }
@@ -45,7 +46,7 @@ public class RoomMessageFormattedTextPutBodyTest {
         String rawFallback = "test";
         String html = "<img src=\"mxc://matrix.local/vaqAwlPGRjSoyCjUuGVAxhHc\" width=\"16\" height=\"16\" style=\"vertical-align:middle; margin-right: 4px; border-radius: 2px;\" alt=\"Raremote\" title=\"Raremote\" data-mx-emoticon=\"true\" />";
         RoomMessageFormattedTextPutBody body = new RoomMessageFormattedTextPutBody(rawFallback, html);
-        
+
         JsonObject json = GsonUtil.makeObj(body);
         System.out.println("DEBUG JSON: " + json);
         assertTrue(json.has("formatted_body"));
@@ -63,7 +64,7 @@ public class RoomMessageFormattedTextPutBodyTest {
         String rawFallback = "test";
         String html = "<span data-test=\"value\">text</span>";
         RoomMessageFormattedTextPutBody body = new RoomMessageFormattedTextPutBody(rawFallback, html);
-        
+
         JsonObject json = GsonUtil.makeObj(body);
         String formattedBody = json.get("formatted_body").getAsString();
         assertTrue(formattedBody.contains("<span"));

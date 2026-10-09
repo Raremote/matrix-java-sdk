@@ -36,7 +36,7 @@ plugins {
 }
 
 group = 'io.kamax'
-version = providers.gradleProperty('version').getOrElse('0.1.0')
+version = providers.gradleProperty('version').getOrElse('1.0.0')
 
 
 

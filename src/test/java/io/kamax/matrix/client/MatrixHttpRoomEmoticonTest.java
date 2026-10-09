@@ -24,6 +24,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -32,6 +33,7 @@ import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+
 import static org.junit.Assert.*;
 
 public class MatrixHttpRoomEmoticonTest extends MatrixHttpTest {
@@ -46,9 +48,7 @@ public class MatrixHttpRoomEmoticonTest extends MatrixHttpTest {
     public void testSendEmoticon() throws URISyntaxException {
         // Setup WireMock to capture the request
         stubFor(post(urlPathMatching("/_matrix/client/v3/rooms/" + roomId + "/send/m.room.message/[0-9]+"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withBody("{\"event_id\": \"" + eventId + "\"}")));
+                .willReturn(aResponse().withStatus(200).withBody("{\"event_id\": \"" + eventId + "\"}")));
 
         // Create a mock client context
         MatrixClientContext context = new MatrixClientContext(new io.kamax.matrix.hs.MatrixHomeserver(domain, baseUrl));
@@ -68,23 +68,24 @@ public class MatrixHttpRoomEmoticonTest extends MatrixHttpTest {
         if (!events.isEmpty()) {
             String body = events.get(0).getRequest().getBodyAsString();
             System.out.println("Request body: " + body);
-            
+
             // Parse JSON
             JsonObject json = JsonParser.parseString(body).getAsJsonObject();
             assertTrue(json.has("formatted_body"));
             String formattedBody = json.get("formatted_body").getAsString();
             assertTrue("formatted_body should contain data-mx-emoticon", formattedBody.contains("data-mx-emoticon"));
-            assertTrue("formatted_body should contain the exact src", formattedBody.contains("mxc://matrix.local/vaqAwlPGRjSoyCjUuGVAxhHc"));
+            assertTrue("formatted_body should contain the exact src",
+                    formattedBody.contains("mxc://matrix.local/vaqAwlPGRjSoyCjUuGVAxhHc"));
             assertTrue("formatted_body should contain alt", formattedBody.contains("alt=\"Raremote\""));
             assertTrue("formatted_body should contain title", formattedBody.contains("title=\"Raremote\""));
             assertTrue("formatted_body should contain height", formattedBody.contains("height=\"16\""));
-            
+
             // Check format field
             assertEquals("org.matrix.custom.html", json.get("format").getAsString());
             assertEquals("m.text", json.get("msgtype").getAsString());
             assertEquals(rawFallback, json.get("body").getAsString());
         }
-        
+
         assertEquals(eventId, result);
     }
 }

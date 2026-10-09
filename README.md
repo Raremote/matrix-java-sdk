@@ -34,7 +34,7 @@ Then include the built JAR in your project or install it to your local Maven rep
 #### Gradle
 ```
 dependencies {
-    implementation 'io.kamax:matrix-java-sdk:0.1.0' // Check latest version in build.gradle
+    implementation 'io.kamax:matrix-java-sdk:1.0.0' // Check latest version in build.gradle
 }
 ```
 
@@ -44,7 +44,7 @@ dependencies {
   <dependency>
     <groupId>io.kamax</groupId>
     <artifactId>matrix-java-sdk</artifactId>
-    <version>0.1.0</version> <!-- Check latest version in build.gradle -->
+    <version>1.0.0</version> <!-- Check latest version in build.gradle -->
   </dependency>
 </dependencies>
 ```
